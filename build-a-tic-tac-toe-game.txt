@@ -1,0 +1,114 @@
+** start of index.html **
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Tic-Tac-Toe</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.development.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.development.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.5/babel.min.js"></script>
+    <script
+      data-plugins="transform-modules-umd"
+      type="text/babel"
+      src="index.jsx"
+    ></script>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div id="root"></div>
+    <script
+      data-plugins="transform-modules-umd"
+      type="text/babel"
+      data-presets="react"
+      data-type="module"
+    >
+      import { Board } from './index.jsx';
+      ReactDOM.createRoot(document.getElementById('root')).render(<Board />);
+    </script>
+</body>
+
+</html>
+
+** end of index.html **
+
+** start of styles.css **
+
+
+
+** end of styles.css **
+
+** start of index.jsx **
+
+const { useState } = React;
+
+export function Board() {
+  const [squares, setSquares] = useState(Array(9).fill(null));
+  const [xIsNext, setXisNext] = useState(true);
+  
+  const winner = calculateWinner(squares);
+  const isDraw = !winner && squares.every(sq => sq !== null);
+
+  const handleReset = () => {
+    setSquares(Array(9).fill(null));
+    setXisNext(true);
+  };
+  const handleClick = (i) => {
+    if(winner || squares[i]) return;
+    const nextSquares = [...squares];
+    nextSquares[i] = xIsNext ? 'X' : 'O';
+    
+    setSquares(nextSquares);
+    setXisNext(!xIsNext);
+
+  }
+  let status;
+  if(winner) {
+    status= `Winner: ${winner}`;
+  } else if(isDraw) {
+    status = "Draw";
+  } else {
+    status = `Next player: ${xIsNext ? 'X' : 'O'}`
+  }
+
+  return (
+    <div>
+      <div className="status">
+      {status}
+      </div>
+      <div className="board-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 100px)'}}>
+      {squares.map((value, i) => (
+        <button
+        key={i}
+        className="square"
+        onClick={() => handleClick(i)}
+        >
+        {value}
+        </button>
+      ))}
+      </div>
+      <button id="reset" onClick={handleReset}>Reset Game</button>
+    </div>
+  )
+}
+
+
+
+function calculateWinner(squares) { 
+    const lines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+    [0, 4, 8], [2, 4, 6]
+  ];
+  for (let[a, b, c] of lines) {
+    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      return squares[a];
+    }
+  }
+  return null;
+}
+
+** end of index.jsx **
+
